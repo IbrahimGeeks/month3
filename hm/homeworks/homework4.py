@@ -1,4 +1,9 @@
-mport flet as ft 
+import flet as ft 
+import datetime as dt
+
+now = dt.datetime.now()
+
+
 
 def main_page(page: ft.Page):
     page.title = 'Мое первое приложение'
@@ -18,16 +23,27 @@ def main_page(page: ft.Page):
         name = text_input.value.strip()
 
         if name:
-           text_hello.value = f"Привет! {name}"
-           text_hello.color = ft.Colors.BLUE
-           text_input.value = ""
-           greeting_history.append(name)
-           greeting_text.value = f'История приветсвия: \n' + "\n".join(greeting_history)
-           
-           
+            if name.isdigit():
+                text_hello.value = "Имя не может состоять из цифр!"
+                text_hello.color = ft.Colors.RED_900
+
+            elif len(name) < 2:
+                text_hello.value = "Имя должно быть не менее 2 символов!"
+                text_hello.color = ft.Colors.RED_900
+
+            elif name in greeting_history:
+                text_hello.value = "Это имя уже в истории"
+                text_hello.color = ft.Colors.RED
+            else:
+                text_hello.value = f"Привет! {name}"
+                text_hello.color = ft.Colors.BLUE
+                greeting_history.append(name)
+                greeting_text.value = "История приветствия:\n" + "\n".join(greeting_history)
+
+            text_input.value = ""
 
         else:
-            text_hello.value = "Введите корректное имя!" 
+            text_hello.value = "Введите корректное имя!"
             text_hello.color = ft.Colors.RED_900
 
 
@@ -80,11 +96,11 @@ def main_page(page: ft.Page):
     chose_button = ft.IconButton(icon=ft.Icons.FAVORITE, on_click=add_favorite)
 
     main_object = ft.Row(
-        controls=[text_input, btn, clear_button, chose_button],
+        controls=[text_input, btn, chose_button],
         alignment=ft.MainAxisAlignment.CENTER
         ) 
 
-    page.add(text_hello, main_object, theme_btn, greeting_text, chose_text)
+    page.add(ft.Column([ ft.Row([clear_button, theme_btn], alignment=ft.MainAxisAlignment.CENTER), text_hello, main_object, greeting_text, chose_text], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER))
 
 
-ft.app(main_page, view=ft.AppView.WEB_BROWSER)
+ft.app(main_page, view=ft.AppView.WEB_BROWSER) 
